@@ -1,0 +1,191 @@
+" !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+" This file is managed by SaltStack
+" !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+" !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+" /etc/vimrc is loaded first, more info:
+" :help initialization
+" :version
+" !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+
+" ====== plugin manager - Vundle =======
+set nocompatible              " required
+filetype off                  " required
+
+" set the runtime path to include Vundle and initialize
+set rtp+=~/.vim/bundle/Vundle.vim
+call vundle#begin()
+
+" let Vundle manage Vundle, required
+Plugin 'VundleVim/Vundle.vim'
+
+" ------ git ------
+" basic git integration:
+Plugin 'tpope/vim-fugitive'
+
+" ------ filesystem ------
+" file tree:
+Plugin 'scrooloose/nerdtree'
+" search:
+Plugin 'ctrlpvim/ctrlp.vim' " active fork of unmaintained kien/ctrlp.vim
+
+" ------ python sytax checker ------
+" autoindent conforming to PEP8 standards:
+Plugin 'vim-scripts/indentpython.vim'
+" syntax checking/highlighting - multiple languages:
+Plugin 'vim-syntastic/syntastic'
+"" IDE only ?wymaga instalacji flake8 przez pip? " Plugin 'nvie/vim-flake8'
+
+" ------ auto-completion stuff ------
+"" IDE only " Plugin 'Valloric/YouCompleteMe'
+
+
+" ------ completion tool for HTML, CSS and JavaScript ------
+Plugin 'mattn/emmet-vim'
+
+" ------ SaltStack syntax checker ------
+Plugin 'saltstack/salt-vim'
+
+
+" ------ code folding ------
+Plugin 'tmhedberg/SimpylFold'
+
+" ------ colors ------
+Plugin 'jnurmine/Zenburn'
+Plugin 'altercation/vim-colors-solarized'
+
+" ------ misc ------
+Plugin 'Lokaltog/powerline', {'rtp': 'powerline/bindings/vim/'}
+
+" All of your Plugins must be added before the following line
+call vundle#end()            " required
+filetype plugin indent on    " required
+
+" ====== custom keys ======
+" leave insert mode
+inoremap jk <ESC>
+
+" leader key, DEFAULT( \ )
+let mapleader="\<Space>"
+
+" combining visual mode with repetition( ref: wiki )
+vnoremap . :norm.<CR>
+
+" ====== split =======
+set splitbelow
+set splitright
+" split navigations
+nnoremap <C-J> <C-W><C-J>
+nnoremap <C-K> <C-W><C-K>
+nnoremap <C-L> <C-W><C-L>
+nnoremap <C-H> <C-W><C-H>
+
+
+" ====== folding =======
+set foldmethod=indent
+set foldlevel=99
+" Enable folding with the spacebar
+nnoremap <Space> za
+" show the docstrings for folded code
+let g:SimpylFold_docstring_preview=1
+
+
+" ====== Auto-complete =====
+" autocomplete window goes away when you’re done with it
+""let g:ycm_autoclose_preview_window_after_completion=1
+" a shortcut for goto definition. Helpful when exploring new code.
+""map <leader>g  :YcmCompleter GoToDefinitionElseDeclaration<CR>
+
+
+" ====== indentation =======
+" default
+set tabstop=4           " Number of spaces that a <Tab> in the file counts for.
+set expandtab           " Use the appropriate number of spaces to insert a <Tab>.
+set softtabstop=4       " Number of spaces that a <Tab> counts for while performing editing operations, like inserting a <Tab> or using <BS>. It feels like <Tab>s are being inserted, while in fact a mix of spaces and <Tab>s is used.
+set shiftwidth=4        " Number of spaces to use for each step of (auto)indent.
+set textwidth=120
+set autoindent
+set fileformat=unix
+
+" python - partial PEP8
+au BufNewFile,BufRead *.py set textwidth=79
+
+" frontend 
+au BufNewFile,BufRead *.js,*.html,*.css set tabstop=2
+au BufNewFile,BufRead *.js,*.html,*.css set softtabstop=2
+au BufNewFile,BufRead *.js,*.html,*.css set shiftwidth=2
+au BufNewFile,BufRead *.js,*.html,*.css set textwidth=79
+
+
+" ====== Flagging Unnecessary Whitespace ======
+" Use the below highlight group when displaying bad whitespace is desired.
+" TODO: ??? move to colors section ???
+highlight BadWhitespace ctermbg=red guibg=red
+" Display tabs at the beginning of a line in Python mode as bad.
+au BufRead,BufNewFile *.py,*.pyw match BadWhitespace /^\t\+/
+" Make trailing whitespace be flagged as bad.
+au BufRead,BufNewFile *.py,*.pyw,*.c,*.h match BadWhitespace /\s\+$/
+
+
+
+
+" ====== python with virtualenv support ======
+"" IDE only "
+""py << EOF
+""import os.path
+""import sys
+""import vim
+""if 'VIRTUA_ENV' in os.environ:
+""  project_base_dir = os.environ['VIRTUAL_ENV']
+""  sys.path.insert(0, project_base_dir)
+""  activate_this = os.path.join(project_base_dir,'bin/activate_this.py')
+""  execfile(activate_this, dict(__file__=activate_this))
+""EOF
+
+
+" ====== for full syntax highlighting ======
+let python_highlight_all=1
+syntax on
+
+
+" ====== colors ======
+"if has('gui_running')
+"    set background=dark
+"    colorscheme solarized
+"else
+"    set background=light
+"    colorscheme zenburn
+"endif
+
+" if has('gui_running')
+"   set background=light
+"   colorscheme solarized
+" else
+"   set background=dark
+"   colorscheme solarized
+" endif
+
+" switching between Solarized themes by pressing F5:
+call togglebg#map("<F5>")
+
+
+" ====== filesystem ======
+" open a NERDTree automatically when vim starts up
+autocmd vimenter * NERDTree
+" hide .pyc files
+let NERDTreeIgnore=['\.pyc$', '\~$'] "ignore files in NERDTree
+
+
+" ====== misc ======
+" line numbers
+set nu
+
+" allow hide unsaved buffers
+set hidden
+
+" paste mode
+set pastetoggle=<F8>        " switch paste mode with F8
+
+" encoding
+set encoding=utf-8

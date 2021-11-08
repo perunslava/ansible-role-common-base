@@ -1,0 +1,36 @@
+---
+- name: Disable and mask FirewallD
+  ansible.builtin.systemd:
+    name: firewalld
+    state: stopped
+    enabled: no
+    masked: yes
+  register: firewalld_service_result
+  failed_when: "firewalld_service_result is failed and 'Could not find the requested service' not in firewalld_service_result.msg"
+
+- name: Install iptables tool
+  package:
+    state: present
+    name:
+      - iptables-services
+
+- name: Enable iptables service
+  ansible.builtin.systemd:
+    name: iptables
+    state: started
+    enabled: yes
+
+- name: Install iptables rules
+  copy:
+    src: "{{ role_path }}/files/iptables/{{ iptables_rules | default('default') }}.rules"
+    dest: "/etc/sysconfig/iptables"
+    owner: root
+    group: root
+    mode: "600"
+  register: iptables_rules_updated
+
+- name: Reload iptables service
+  ansible.builtin.systemd:
+    name: iptables
+    state: reloaded
+  when: iptables_rules_updated.changed == True

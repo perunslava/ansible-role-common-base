@@ -1,0 +1,8 @@
+---
+# tasks file for common-base role
+
+- import_tasks: firewall.yml
+- import_tasks: sysctl.yml
+- import_tasks: selinux.yml
+- import_tasks: core.yml
+- import_tasks: update-os.yml

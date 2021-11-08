@@ -1,0 +1,33 @@
+### .bashrc
+
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# This file is managed by SaltStack
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+# Source global definitions
+if [ -f /etc/bashrc ]; then
+	. /etc/bashrc
+fi
+
+# Uncomment the following line if you don't like systemctl's auto-paging feature:
+# export SYSTEMD_PAGER=
+
+### User specific aliases and functions
+
+# 
+alias ls='ls --color=auto'
+alias ll='ls --color=auto -lhA'
+
+# Make some of the file manipulation programs verbose
+alias mv='mv -v'
+alias cp='cp -v'
+alias rm='rm -v'
+
+# Prints disk usage in human readable form
+alias d="du -sh"
+
+# find 20 largest files/dirs in current directory
+alias ducks='du -cks * | sort -rn | head -21'
+
+# my ip
+alias myip="curl http://ipecho.net/plain; echo"

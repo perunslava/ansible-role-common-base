@@ -1,0 +1,8 @@
+1. To install Vim plugins clone Vundle:
+
+git clone https://github.com/VundleVim/Vundle.vim ~/.vim/bundle/Vundle.vim
+
+2. In Vim run command:
+:PluginInstall
+
+3. Close Vim

@@ -1,0 +1,108 @@
+---
+- name: Install repos
+  package:
+    name:
+      - epel-release
+    state: present
+  become: true
+  register: result_repo_install
+  retries: 3
+  delay: 10
+  until: result_repo_install is succeeded
+
+- name: Install packages
+  package:
+    name:
+      - git
+      - tmux
+      - vim-enhanced
+      - epel-release
+      - bash-completion
+      - numactl
+      - pciutils
+      - htop
+      - lsscsi
+      - p7zip
+      - p7zip-plugins
+      - smartmontools
+      - strace
+      - tree
+      - yum-plugin-versionlock
+    state: present
+  become: true
+  register: result_package_install
+  retries: 3
+  delay: 10
+  until: result_package_install is succeeded
+
+- name: Install networking pkgs
+  package:
+    name:
+      - bind-utils
+      - hping3
+      - fping
+      - ipcalc
+      - tcpdump
+      - lldpad
+      - curl
+      - lftp
+      - rsync
+      - wget
+      - nmap
+      - dnstop
+      - bridge-utils
+      - conntrack-tools
+    state: present
+  become: true
+  register: result_net_package_install
+  retries: 3
+  delay: 10
+  until: result_net_package_install is succeeded
+
+- name: copy vim configuration files - user
+  copy:
+    src: "{{ role_path }}/files/vim/"
+    dest: "/home/{{ virt_infra_user }}/.vim/"
+    owner: "{{ virt_infra_user }}"
+    group: "{{ virt_infra_user }}"
+    force: yes
+
+- name: copy vim configuration files - root
+  copy:
+    src: "{{ role_path }}/files/vim/"
+    dest: "/root/.vim/"
+    owner: root
+    group: root
+    force: yes
+
+- name: copy .bashrc - user
+  template:
+    src: "{{ role_path }}/files/bashrc"
+    dest: /home/{{ virt_infra_user }}/.bashrc
+    owner: "{{ virt_infra_user }}"
+    group: "{{ virt_infra_user }}"
+    force: yes
+
+- name: copy .bash_profile - user
+  template:
+    src: "{{ role_path }}/files/bash_profile"
+    dest: /home/{{ virt_infra_user }}/.bash_profile
+    owner: "{{ virt_infra_user }}"
+    group: "{{ virt_infra_user }}"
+    force: yes
+
+- name: copy .bashrc - root
+  template:
+    src: "{{ role_path }}/files/bashrc"
+    dest: /root/.bashrc
+    owner: "root"
+    group: "root"
+    force: yes
+
+- name: copy .bash_profile - root
+  template:
+    src: "{{ role_path }}/files/bash_profile"
+    dest: /root/.bash_profile
+    owner: "root"
+    group: "root"
+    force: yes

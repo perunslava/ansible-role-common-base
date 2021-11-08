@@ -1,0 +1,33 @@
+---
+- name: Install packages required to mange selinux from ansible
+  package:
+    name:
+      - selinux-policy-targeted
+      - policycoreutils
+      - policycoreutils-python-utils
+    state: present
+  become: true
+  register: result_package_selinux_install
+  retries: 3
+  delay: 10
+  until: result_package_selinux_install is succeeded
+
+- name: Disable SELinux
+  ansible.posix.selinux:
+    state: disabled
+  register: result_selinux
+  become: true
+
+- name: Reboot to boot updates
+  reboot:
+  become: true
+  when: result_selinux.changed
+#- name: Enable SELinux
+#  ansible.posix.selinux:
+#    policy: targeted
+#    state: enforcing
+#
+#- name: Put SELinux in permissive mode, logging actions that would be blocked.
+#  ansible.posix.selinux:
+#    policy: targeted
+#    state: permissive

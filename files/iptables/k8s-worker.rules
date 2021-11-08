@@ -1,0 +1,23 @@
+##################################
+# File monitored by ansible
+##################################
+
+*filter
+:INPUT ACCEPT [0:0]
+:FORWARD ACCEPT [0:0]
+:OUTPUT ACCEPT [0:0]
+-A INPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+-A INPUT -p icmp -j ACCEPT
+-A INPUT -i lo -j ACCEPT
+-A INPUT -p tcp -m state --state NEW -m tcp --dport 22 -j ACCEPT -m comment --comment "ssh"
+# Kubelet API
+-A INPUT -p tcp -m state --state NEW -m tcp --dport 10250 -j ACCEPT -m comment --comment "k8s - kublet api"
+# NodePorts Services( only if you want NodePorts exposed on control plane IP )
+-A INPUT -p tcp -m state --state NEW -m tcp --match multiport --dports 30000:32767 -j ACCEPT -m comment --comment "k8s - services"
+# Flannel
+#-A INPUT -p udp -m state --state NEW -m udp --dport 8285 -j ACCEPT -m comment --comment "flannel - udp backend"
+-A INPUT -p udp -m state --state NEW -m udp --dport 8472 -j ACCEPT -m comment --comment "flannel - udp vxlan backend"
+# log
+-A INPUT -j LOG --log-ip-options --log-tcp-options --log-prefix="[INPUT reject] "
+### -A INPUT -j REJECT --reject-with icmp-host-prohibited
+COMMIT

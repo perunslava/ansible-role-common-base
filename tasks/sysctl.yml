@@ -1,0 +1,81 @@
+---
+#{## stop log syslog on terminal  ##}
+#sysctl_stop-low-level-message-on-console:
+#  sysctl.present:
+#    - name: kernel.printk
+#    - value: 3 4 1 3
+#
+#
+#{% if 'hypervisor' in roles %}
+#sysctl_ip_forward:
+#  sysctl.present:
+#    - name: net.ipv4.ip_forward
+#    - value: 1
+#{% endif %}
+
+- name: sysctl - stop low level message on console
+  ansible.posix.sysctl:
+    name: kernel.printk
+    value: "3 4 1 3"
+    sysctl_set: yes
+    state: present
+    reload: yes
+
+# nats nodes
+- name: sysctl - activate ip_forward
+  ansible.posix.sysctl:
+    name: net.ipv4.ip_forward
+    value: "1"
+    sysctl_set: yes
+    state: present
+    reload: yes
+  when:
+    - inventory_hostname in groups['nats']
+
+# k8s nodes, master and worker
+- name: modprobe - config for k8s cluster
+  copy:
+    src: "{{ role_path }}/files/modprobe/k8s.conf"
+    dest: "/etc/modules-load.d/k8s.conf"
+    owner: root
+    group: root
+    mode: "600"
+  register: modropbe_k8s
+  when:
+    - inventory_hostname in groups['k8s_nodes']
+
+- name: modprobe - load modules for k8s cluster
+  ansible.builtin.systemd:
+    name: systemd-modules-load
+    state: restarted
+  when: modropbe_k8s.changed == True
+
+- name: sysctl - iptables for bridged traffic
+  ansible.posix.sysctl:
+    name: net.bridge.bridge-nf-call-iptables
+    value: "1"
+    sysctl_set: yes
+    state: present
+    reload: yes
+  when:
+    - inventory_hostname in groups['k8s_nodes']
+- name: sysctl - ip6tables for bridged traffic
+  ansible.posix.sysctl:
+    name: net.bridge.bridge-nf-call-ip6tables
+    value: "1"
+    sysctl_set: yes
+    state: present
+    reload: yes
+  when:
+    - inventory_hostname in groups['k8s_nodes']
+
+# prawdopodobnie niepotrzebne
+- name: sysctl - ip forward
+  ansible.posix.sysctl:
+    name: net.ipv4.ip_forward
+    value: "1"
+    sysctl_set: yes
+    state: present
+    reload: yes
+  when:
+    - inventory_hostname in groups['k8s_nodes']

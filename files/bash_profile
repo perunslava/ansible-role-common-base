@@ -1,0 +1,33 @@
+### .bash_profile
+
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+# This file is managed by ansible
+# !!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!
+
+# Get the aliases and functions
+if [ -f ~/.bashrc ]; then
+	. ~/.bashrc
+fi
+
+### User specific environment and startup programs
+
+# set PATH so it includes user's private bin if it exists
+if [ -d "$HOME/bin" ] ; then
+    PATH="$PATH:$HOME/bin"
+fi
+if [ -d "$HOME/.local/bin" ] ; then
+    PATH="$PATH:$HOME/.local/bin"
+fi
+export PATH
+
+
+# configure prompt
+PS1="[\t] \u@\h \w\$ "
+
+# configure bash history
+export HISTSIZE=10000
+export HISTFILESIZE=10000
+export HISTCONTROL='erasedups'
+HISTTIMEFORMAT="[%F %T %Z] "
+export HISTTIMEFORMAT
+
